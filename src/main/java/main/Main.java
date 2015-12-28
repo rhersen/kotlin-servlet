@@ -16,7 +16,7 @@ public class Main extends javax.servlet.http.HttpServlet {
         PrintWriter w = resp.getWriter();
         Tag t = t("html",
                 asList(t("head",
-                        asList(t("meta", "", "charset", "utf-8"),
+                        asList(t("meta", null, "charset", "utf-8"),
                                 t("title", "blah"))),
                         t("body",
                                 t("p", "I am the content"))));

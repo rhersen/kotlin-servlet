@@ -2,13 +2,15 @@ package main;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class Tag {
 
     static Tag t(String tagName, String content, String attrName, String attrValue) {
-        return new Tag(tagName, singletonList(content), attrName, attrValue);
+        return new Tag(tagName, content == null ? emptyList() : singletonList(content), attrName, attrValue);
     }
 
     static Tag t(String tagName, String content) {
@@ -42,7 +44,7 @@ public class Tag {
         if (attrName != null) b.append(" ").append(attrName).append("=").append(attrValue);
         b.append(">");
         contents.forEach(b::append);
-        b.append("</").append(name).append(">");
+        if (!contents.isEmpty()) b.append("</").append(name).append(">");
         return b.toString();
     }
 }
