@@ -11,6 +11,7 @@ import static main.Tag.t;
 
 public class Main extends javax.servlet.http.HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("text/html");
         PrintWriter w = resp.getWriter();
         Tag t = t("html",
                 asList(t("head",
