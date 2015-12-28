@@ -19,7 +19,7 @@ public class TagTest {
     public void noEndTagIfContentIsNull() throws Exception {
         Tag subject = t("name", null, "class", "sub");
         String result = "" + subject;
-        assertEquals("<name class=sub></name>", result);
+        assertEquals("<name class=sub>", result);
     }
 
     @Test
