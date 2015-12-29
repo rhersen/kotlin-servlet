@@ -1,16 +1,17 @@
 package main;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class Tag {
 
     static Tag t(String tagName, String content, String attrName, String attrValue) {
-        return new Tag(tagName, content == null ? emptyList() : singletonList(content), attrName, attrValue);
+        return new Tag(tagName, singletonList(content), attrName, attrValue);
+    }
+
+    static Tag t(String tagName, Collection contents, String attrName, String attrValue) {
+        return new Tag(tagName, contents, attrName, attrValue);
     }
 
     static Tag t(String tagName, String content) {
@@ -40,11 +41,19 @@ public class Tag {
     @SuppressWarnings("unchecked")
     public String toString() {
         StringBuilder b = new StringBuilder();
+
         b.append("<").append(name);
-        if (attrName != null) b.append(" ").append(attrName).append("=").append(attrValue);
+
+        if (attrName != null)
+            b.append(" ").append(attrName).append("=").append(attrValue);
+
         b.append(">");
+
         contents.forEach(b::append);
-        if (!contents.isEmpty()) b.append("</").append(name).append(">");
+
+        if (!contents.isEmpty())
+            b.append("</").append(name).append(">");
+
         return b.toString();
     }
 }

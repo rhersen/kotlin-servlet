@@ -5,8 +5,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static main.Tag.t;
 
 public class Main extends javax.servlet.http.HttpServlet {
@@ -16,7 +18,7 @@ public class Main extends javax.servlet.http.HttpServlet {
         PrintWriter w = resp.getWriter();
         Tag t = t("html",
                 asList(t("head",
-                        asList(t("meta", null, "charset", "utf-8"),
+                        asList(t("meta", emptyList(), "charset", "utf-8"),
                                 t("title", "blah"))),
                         t("body",
                                 t("p", "I am the content"))));
