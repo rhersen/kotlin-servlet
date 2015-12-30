@@ -1,7 +1,9 @@
 package main;
 
 import java.util.Collection;
+import java.util.List;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
 public class Tag {
@@ -24,6 +26,10 @@ public class Tag {
 
     static Tag t(String tagName, Collection contents) {
         return new Tag(tagName, contents, null, null);
+    }
+
+    static List<Tag> c(Tag... tags) {
+        return asList(tags);
     }
 
     private String name;

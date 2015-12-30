@@ -2,8 +2,10 @@ package main;
 
 import org.junit.Test;
 
+import java.util.Collection;
+
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
+import static main.Tag.c;
 import static main.Tag.t;
 import static org.junit.Assert.*;
 
@@ -25,7 +27,7 @@ public class TagTest {
 
     @Test
     public void noEndTagIfNoContent() throws Exception {
-        Tag subject = t("name", emptyList());
+        Tag subject = t("name", c());
         String result = "" + subject;
         assertEquals("<name>", result);
     }
@@ -39,7 +41,7 @@ public class TagTest {
 
     @Test
     public void twoTagsAsContent() throws Exception {
-        Tag subject = t("tr", asList(t("td", "hello"), t("td", "world")));
+        Tag subject = t("tr", c(t("td", "hello"), t("td", "world")));
         String result = "" + subject;
         assertEquals("<tr><td>hello</td><td>world</td></tr>", result);
     }
