@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
+import static main.Tag.a;
 import static main.Tag.c;
 import static main.Tag.t;
 import static org.junit.Assert.*;
@@ -20,7 +21,7 @@ public class TagTest {
 
     @Test
     public void attribute() throws Exception {
-        Tag subject = t("name", "text", "class", "sub");
+        Tag subject = t("name", "text", a("class", "sub"));
         String result = "" + subject;
         assertEquals("<name class=sub>text</name>", result);
     }

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
 
+import static main.Tag.a;
 import static main.Tag.c;
 import static main.Tag.t;
 
@@ -18,7 +19,9 @@ public class Main extends javax.servlet.http.HttpServlet {
         Tag t = t("html",
                 c(
                         t("head",
-                                c(t("meta", c(), "charset", "utf-8"), t("title", "blah"))),
+                                c(
+                                        t("meta", c(), a("charset", "utf-8")),
+                                        t("title", "blah"))),
                         t("body",
                                 t("p", "I'm the content"))));
         writeHtml(w, t);

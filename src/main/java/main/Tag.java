@@ -4,44 +4,47 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class Tag {
 
-    static Tag t(String tagName, String content, String attrName, String attrValue) {
-        return new Tag(tagName, singletonList(content), attrName, attrValue);
+    static Tag t(String tagName, String content, List<String> attr) {
+        return new Tag(tagName, singletonList(content), attr);
     }
 
-    static Tag t(String tagName, Collection contents, String attrName, String attrValue) {
-        return new Tag(tagName, contents, attrName, attrValue);
+    static Tag t(String tagName, Collection contents, List<String> attr) {
+        return new Tag(tagName, contents, attr);
     }
 
     static Tag t(String tagName, String content) {
-        return new Tag(tagName, singletonList(content), null, null);
+        return new Tag(tagName, singletonList(content), emptyList());
     }
 
     static Tag t(String tagName, Tag content) {
-        return new Tag(tagName, singletonList(content), null, null);
+        return new Tag(tagName, singletonList(content), emptyList());
     }
 
     static Tag t(String tagName, Collection contents) {
-        return new Tag(tagName, contents, null, null);
+        return new Tag(tagName, contents, emptyList());
     }
 
     static List<Tag> c(Tag... tags) {
         return asList(tags);
     }
 
+    static List<String> a(String key, String value) {
+        return asList(key, value);
+    }
+
     private String name;
     private final Collection contents;
-    private String attrName;
-    private final String attrValue;
+    private List<String> attr;
 
-    private Tag(String name, Collection contents, String attrName, String attrValue) {
+    private Tag(String name, Collection contents, List<String> attr) {
         this.name = name;
         this.contents = contents;
-        this.attrName = attrName;
-        this.attrValue = attrValue;
+        this.attr = attr;
     }
 
     @SuppressWarnings("unchecked")
@@ -50,8 +53,8 @@ public class Tag {
 
         b.append("<").append(name);
 
-        if (attrName != null)
-            b.append(" ").append(attrName).append("=").append(attrValue);
+        if (!attr.isEmpty())
+            b.append(" ").append(attr.get(0)).append("=").append(attr.get(1));
 
         b.append(">");
 
