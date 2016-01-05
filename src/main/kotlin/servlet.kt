@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletResponse
 @WebServlet(name = "main", value = "/")
 class HomeController : HttpServlet() {
     override fun doGet(req: HttpServletRequest, res: HttpServletResponse) {
+        res.contentType = "text/html";
+        res.characterEncoding = "UTF-8";
         res.writer.write("""
 <!doctype html>
 <html>
