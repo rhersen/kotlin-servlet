@@ -1,3 +1,3 @@
 public fun getKey(): String {
-    return "get your own from trafiklab.se"
+    throw IllegalAccessException("no api key configured")
 }

@@ -16,39 +16,44 @@ class HomeController : HttpServlet() {
         res.contentType = "text/html";
         res.characterEncoding = "UTF-8";
         val writer = res.writer
-        val responseData = parse(getRealTrains())
+        try {
+            val responseData = parse(getRealTrains())
 
-        writer.write("""<!doctype html>
-        <html>
-         <head>
-          <meta charset=utf-8>
-          <title>${responseData.first()["LocationSignature"]}</title>
-         </head>
-         <body>
-        """)
-        writer.write("""
-        <table>
-         <tr>
-          <th>Train
-          <th>To
-          <th>Advertised
-          <th>Estimated
-          <th>Actual
-        """)
-        responseData.forEach {
+            writer.write("""<!doctype html>
+            <html>
+             <head>
+              <meta charset=utf-8>
+              <title>${responseData.first()["LocationSignature"]}</title>
+             </head>
+             <body>
+            """)
             writer.write("""
-            <tr>
-             <td>${it["AdvertisedTrainIdent"]}
-             <td>${it["ToLocation"]}
-             <td>${it["AdvertisedTimeAtLocation"]}
-             <td>${it["EstimatedTimeAtLocation"]}
-             <td>${it["TimeAtLocation"]}
-        """)
+            <table>
+             <tr>
+              <th>Train
+              <th>To
+              <th>Advertised
+              <th>Estimated
+              <th>Actual
+            """)
+            responseData.forEach {
+                writer.write("""
+                <tr>
+                 <td>${it["AdvertisedTrainIdent"]}
+                 <td>${it["ToLocation"]}
+                 <td>${it["AdvertisedTimeAtLocation"]}
+                 <td>${it["EstimatedTimeAtLocation"]}
+                 <td>${it["TimeAtLocation"]}
+            """)
+            }
+            writer.write("""
+             </body>
+            </html>
+            """)
+        } catch(e: IllegalAccessException) {
+            writer.write(e.message)
+            res.status = 401
         }
-        writer.write("""
-         </body>
-        </html>
-        """)
     }
 }
 
