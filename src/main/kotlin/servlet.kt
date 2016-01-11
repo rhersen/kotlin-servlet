@@ -47,6 +47,7 @@ class HomeController : HttpServlet() {
             """)
             }
             writer.write("""
+              </table>
              </body>
             </html>
             """)
