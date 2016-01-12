@@ -2,6 +2,7 @@ import org.w3c.dom.Node
 import org.xml.sax.InputSource
 import java.io.InputStream
 import java.io.OutputStreamWriter
+import java.io.PrintWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.servlet.annotation.WebServlet
@@ -13,48 +14,53 @@ import javax.xml.parsers.DocumentBuilderFactory
 @WebServlet(name = "main", value = "/")
 class HomeController : HttpServlet() {
     override fun doGet(req: HttpServletRequest, res: HttpServletResponse) {
+        if (req.requestURI.endsWith(".ico")) return
+
         res.contentType = "text/html";
         res.characterEncoding = "UTF-8";
         val writer = res.writer
-        try {
-            val responseData = parse(getRealTrains())
 
-            writer.write("""<!doctype html>
-            <html>
-             <head>
-              <meta charset=utf-8>
-              <title>${responseData.first()["LocationSignature"]}</title>
-             </head>
-             <body>
-            """)
-            writer.write("""
-            <table>
-             <tr>
-              <th>Train
-              <th>To
-              <th>Advertised
-              <th>Estimated
-              <th>Actual
-            """)
-            responseData.forEach {
-                writer.write("""
-                <tr>
-                 <td>${it["AdvertisedTrainIdent"]}
-                 <td>${it["ToLocation"]}
-                 <td>${it["AdvertisedTimeAtLocation"]}
-                 <td>${it["EstimatedTimeAtLocation"]}
-                 <td>${it["TimeAtLocation"]}
-            """)
-            }
-            writer.write("""
-              </table>
-             </body>
-            </html>
-            """)
+        try {
+            writeResponse(parse(getRealTrains()), writer)
         } catch(e: IllegalAccessException) {
             writer.write(e.message)
             res.status = 401
         }
+    }
+
+    private fun writeResponse(data: List<Map<String?, String?>>, writer: PrintWriter) {
+        writer.write("""<!doctype html>
+        <html>
+         <head>
+          <meta charset=utf-8>
+          <title>${data.first()["LocationSignature"]}</title>
+         </head>
+         <body>
+        """)
+        writer.write("""
+        <table>
+         <tr>
+          <th>Train
+          <th>To
+          <th>Advertised
+          <th>Estimated
+          <th>Actual
+        """)
+        data.forEach {
+            writer.write("""
+            <tr>
+             <td>${it["AdvertisedTrainIdent"]}
+             <td>${it["ToLocation"]}
+             <td>${it["AdvertisedTimeAtLocation"]}
+             <td>${it["EstimatedTimeAtLocation"]}
+             <td>${it["TimeAtLocation"]}
+        """)
+        }
+        writer.write("""
+          </table>
+         </body>
+        </html>
+        """)
     }
 }
 
