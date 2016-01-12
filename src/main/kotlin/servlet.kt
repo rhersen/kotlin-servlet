@@ -34,8 +34,14 @@ class HomeController : HttpServlet() {
          <head>
           <meta charset=utf-8>
           <title>${data.first()["LocationSignature"]}</title>
+          <style>
+          body { font-family: sans-serif; }
+          table { border-collapse: collapse; }
+          th { border-right: 1px solid #999; }
+          td { border: 1px solid #999; }
+          </style>
          </head>
-         <body style="font-family: sans-serif">
+         <body>
         """)
         writer.write("""
         <table>
