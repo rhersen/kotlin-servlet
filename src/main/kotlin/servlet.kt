@@ -57,9 +57,9 @@ class HomeController : HttpServlet() {
             <tr>
              <td>${it["AdvertisedTrainIdent"]}
              <td>${it["ToLocation"]}
-             <td>${it["AdvertisedTimeAtLocation"]}
-             <td>${it["EstimatedTimeAtLocation"]}
-             <td>${it["TimeAtLocation"]}
+             <td>${formatTime(it["AdvertisedTimeAtLocation"])}
+             <td>${formatTime(it["EstimatedTimeAtLocation"])}
+             <td>${formatTime(it["TimeAtLocation"])}
         """)
         }
         writer.write("""
