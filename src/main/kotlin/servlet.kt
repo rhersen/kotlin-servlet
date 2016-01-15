@@ -32,10 +32,12 @@ class HomeController : HttpServlet() {
         writer.write("""<!doctype html>
         <html>
          <head>
+          <meta content='true' name='HandheldFriendly'>
+          <meta content='width=device-width, height=device-height, user-scalable=no' name='viewport'>
           <meta charset=utf-8>
           <title>${data.first()["LocationSignature"]}</title>
           <style>
-          body { font-family: sans-serif; }
+          body { font-family: sans-serif; font-size: 24px }
           table { border-collapse: collapse; }
           th { border-right: 1px solid #999; }
           td { border: 1px solid #999; }
@@ -46,11 +48,11 @@ class HomeController : HttpServlet() {
         writer.write("""
         <table>
          <tr>
-          <th>Train
+          <th>Id
           <th>To
-          <th>Advertised
-          <th>Estimated
-          <th>Actual
+          <th>Adv
+          <th>Est
+          <th>Act
         """)
         data.forEach {
             writer.write("""
