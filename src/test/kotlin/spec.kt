@@ -20,6 +20,16 @@ class ParseSpecs : Spek() { init {
 
 class formatSpecs : Spek() { init {
     given("date-time string") {
+        val unformatted = "2016-01-13T07:37:06"
+        on("formatTime") {
+            val value: String = formatTime(unformatted)
+            it("should") {
+                assertEquals("07:37:06", value)
+            }
+        }
+    }
+
+    given("date-time string without seconds") {
         val unformatted = "2016-01-13T07:37:00"
         on("formatTime") {
             val value: String = formatTime(unformatted)

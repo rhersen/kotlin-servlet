@@ -1,11 +1,16 @@
-fun formatTime(s: String?): String {
-    if (s == null) return ""
+fun formatTime(unformatted: String?): String {
+    if (unformatted == null)
+        return ""
 
-    val t = s.indexOf("T")
+    val zeroSeconds = Regex(""".*T(\d\d:\d\d):00""").matchEntire(unformatted)
 
-    when {
-        t == -1 -> return s
-        s.endsWith(":00") -> return s.substring(t + 1, t + 6)
-        else -> return s.substring(t + 1)
-    }
+    if (zeroSeconds != null)
+        return zeroSeconds.groups[1]?.value.toString()
+
+    val nonZeroSeconds = Regex(""".*T(\d\d:\d\d:\d\d)""").matchEntire(unformatted)
+
+    if (nonZeroSeconds != null)
+        return nonZeroSeconds.groups[1]?.value.toString()
+
+    return unformatted
 }
