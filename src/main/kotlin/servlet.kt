@@ -20,15 +20,50 @@ class HomeController : HttpServlet() {
         res.characterEncoding = "UTF-8";
         val writer = res.writer
 
+        val servletPath = req.servletPath
+        val locationSignature = servletPath.substring(servletPath.lastIndexOf('/') + 1)
+
         try {
-            writeResponse(parse(getRealTrains()), writer)
+            val departures = parse(getRealTrains(locationSignature))
+
+            if (departures.isEmpty())
+                writeIndex(writer)
+            else
+                writeStation(departures, writer)
+
         } catch(e: IllegalAccessException) {
             writer.write(e.message)
             res.status = 401
         }
     }
 
-    private fun writeResponse(data: List<Map<String?, String?>>, writer: PrintWriter) {
+    private fun writeIndex(writer: PrintWriter) {
+        writer.write("""<!doctype html>
+        <html>
+         <head>
+          <meta content='true' name='HandheldFriendly'>
+          <meta content='width=device-width, height=device-height, user-scalable=no' name='viewport'>
+          <meta charset=utf-8>
+          <title>kotlin servlet</title>
+          <style>
+          body { font-family: sans-serif; font-size: 24px }
+          </style>
+         </head>
+         <body>
+        """)
+        writer.write("""
+        <ol>
+          <li><a href="Cst">Centralen</a>
+          <li><a href="Tul">Tullinge</a>
+        """)
+        writer.write("""
+          </ol>
+         </body>
+        </html>
+        """)
+    }
+
+    private fun writeStation(data: List<Map<String?, String?>>, writer: PrintWriter) {
         writer.write("""<!doctype html>
         <html>
          <head>
@@ -72,7 +107,7 @@ class HomeController : HttpServlet() {
     }
 }
 
-private fun getRealTrains(): InputStream {
+private fun getRealTrains(locationSignature: String): InputStream {
     val url = URL("http://api.trafikinfo.trafikverket.se/v1/data.xml")
     val conn = url.openConnection() as HttpURLConnection
     conn.requestMethod = "POST"
@@ -86,7 +121,7 @@ private fun getRealTrains(): InputStream {
             <IN name='ProductInformation' value='Pendeltåg' />
             <LIKE name='AdvertisedTrainIdent' value='[0-9]$' />
             <EQ name='ActivityType' value='Avgang' />
-            <EQ name='LocationSignature' value='Tul' />
+            <EQ name='LocationSignature' value='$locationSignature' />
             <GT name='AdvertisedTimeAtLocation' value='$dateadd(-00:10:00)' />
             <LT name='AdvertisedTimeAtLocation' value='$dateadd(00:50:00)' />
             """))
