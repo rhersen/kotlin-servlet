@@ -1,8 +1,6 @@
 import org.w3c.dom.Node
 import org.xml.sax.InputSource
-import java.io.InputStream
-import java.io.OutputStreamWriter
-import java.io.PrintWriter
+import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.servlet.annotation.WebServlet
@@ -64,15 +62,17 @@ class HomeController : HttpServlet() {
     }
 
     private fun writeStation(data: List<Map<String?, String?>>, writer: PrintWriter) {
+        val locationSignature = data.first()["LocationSignature"]
         writer.write("""<!doctype html>
         <html>
          <head>
           <meta content='true' name='HandheldFriendly'>
           <meta content='width=device-width, height=device-height, user-scalable=no' name='viewport'>
           <meta charset=utf-8>
-          <title>${data.first()["LocationSignature"]}</title>
+          <title>$locationSignature</title>
           <style>
           body { font-family: sans-serif; font-size: 24px }
+          h1 { margin: 0; font-size: 32px }
           table { border-collapse: collapse; }
           th { border-right: 1px solid #999; }
           td { border: 1px solid #999; }
@@ -81,6 +81,7 @@ class HomeController : HttpServlet() {
          <body>
         """)
         writer.write("""
+        <h1>$locationSignature</h1>
         <table>
          <tr>
           <th>Id
