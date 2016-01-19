@@ -36,19 +36,7 @@ class HomeController : HttpServlet() {
     }
 
     private fun writeIndex(writer: PrintWriter) {
-        writer.write("""<!doctype html>
-        <html>
-         <head>
-          <meta content='true' name='HandheldFriendly'>
-          <meta content='width=device-width, height=device-height, user-scalable=no' name='viewport'>
-          <meta charset=utf-8>
-          <title>kotlin servlet</title>
-          <style>
-          body { font-family: sans-serif; font-size: 24px }
-          </style>
-         </head>
-         <body>
-        """)
+        writer.write(header("kotlin servlet"))
         writer.write("""
         <ol>
           <li><a href="Cst">Centralen</a>
@@ -63,23 +51,7 @@ class HomeController : HttpServlet() {
 
     private fun writeStation(data: List<Map<String?, String?>>, writer: PrintWriter) {
         val locationSignature = data.first()["LocationSignature"]
-        writer.write("""<!doctype html>
-        <html>
-         <head>
-          <meta content='true' name='HandheldFriendly'>
-          <meta content='width=device-width, height=device-height, user-scalable=no' name='viewport'>
-          <meta charset=utf-8>
-          <title>$locationSignature</title>
-          <style>
-          body { font-family: sans-serif; font-size: 24px }
-          h1 { margin: 0; font-size: 32px }
-          table { border-collapse: collapse; }
-          th { border-right: 1px solid #999; }
-          td { border: 1px solid #999; }
-          </style>
-         </head>
-         <body>
-        """)
+        writer.write(header(locationSignature.orEmpty()))
         writer.write("""
         <h1>$locationSignature</h1>
         <table>
@@ -106,6 +78,26 @@ class HomeController : HttpServlet() {
         </html>
         """)
     }
+
+    private fun header(title: String): String {
+        return """<!doctype html>
+            <html>
+             <head>
+              <meta content='true' name='HandheldFriendly'>
+              <meta content='width=device-width, height=device-height, user-scalable=no' name='viewport'>
+              <meta charset=utf-8>
+              <title>$title</title>
+              <style>
+              body { font-family: sans-serif; font-size: 24px }
+              h1 { margin: 0; font-size: 32px }
+              table { border-collapse: collapse; }
+              th { border-right: 1px solid #999; }
+              td { border: 1px solid #999; }
+              </style>
+             </head>
+             <body>
+            """
+    }
 }
 
 private fun getRealTrains(locationSignature: String): InputStream {
@@ -119,7 +111,7 @@ private fun getRealTrains(locationSignature: String): InputStream {
     w.write(request(
             "AdvertisedTimeAtLocation",
             """
-            <IN name='ProductInformation' value='Pendeltåg' />
+            <LIKE name='ProductInformation' value='Pendelt.g' />
             <LIKE name='AdvertisedTrainIdent' value='[0-9]$' />
             <EQ name='ActivityType' value='Avgang' />
             <EQ name='LocationSignature' value='$locationSignature' />
