@@ -38,12 +38,18 @@ class HomeController : HttpServlet() {
     private fun writeIndex(writer: PrintWriter) {
         writer.write(header("kotlin servlet"))
         writer.write("""
-        <ol>
-          <li><a href="Cst">Centralen</a>
-          <li><a href="Tul">Tullinge</a>
-        """)
-        writer.write("""
-          </ol>
+          <nav class="pull-left">
+            <li><a href="Spå">Spånga</a>
+          </nav>
+          <nav class="pull-left narrow">
+            <li><a href="Sub">Sundbyberg</a>
+          </nav>
+          <nav class="center wide">
+            <li><a href="Cst">Centralen</a>
+          </nav>
+          <nav class="pull-left narrow">
+            <li><a href="Tul">Tullinge</a>
+          </nav>
          </body>
         </html>
         """)
@@ -93,6 +99,15 @@ class HomeController : HttpServlet() {
               table { border-collapse: collapse; }
               th { border-right: 1px solid #999; }
               td { border: 1px solid #999; }
+              li { list-style-type: none; }
+              a { text-decoration: none; }
+              .pull-left { float: left; width: 50%; }
+              .pull-right { float: left; width: 50%; }
+              .pull-right > li { text-align: right; }
+              .narrow { width: 35%; }
+              .center { float: left; width: 30%; }
+              .center > li { text-align: center; }
+              .wide { width: 100%; }
               </style>
              </head>
              <body>
@@ -106,7 +121,7 @@ private fun getRealTrains(locationSignature: String): InputStream {
     conn.requestMethod = "POST"
     conn.setRequestProperty("Content-Type", "text/xml")
     conn.doOutput = true
-    val w = OutputStreamWriter(conn.outputStream)
+    val w = OutputStreamWriter(conn.outputStream, "ISO-8859-1")
     val dateadd = "\$dateadd"
     w.write(request(
             "AdvertisedTimeAtLocation",
