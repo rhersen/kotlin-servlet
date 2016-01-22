@@ -41,14 +41,29 @@ class HomeController : HttpServlet() {
           <nav class="pull-left">
             <li><a href="Spå">Spånga</a>
           </nav>
+          <nav class="pull-right">
+            <li><a href="Udl">Ulriksdal</a>
+          </nav>
           <nav class="pull-left narrow">
             <li><a href="Sub">Sundbyberg</a>
+          </nav>
+          <nav class="center">
+            <li><a href="Ke">Karlberg</a>
+          </nav>
+          <nav class="pull-right narrow">
+            <li><a href="Sol">Solna</a>
           </nav>
           <nav class="center wide">
             <li><a href="Cst">Centralen</a>
           </nav>
           <nav class="pull-left narrow">
             <li><a href="Tul">Tullinge</a>
+          </nav>
+          <nav class="center">
+            <li><a href="Äs">Älvsjö</a>
+          </nav>
+          <nav class="pull-right narrow">
+            <li><a href="Fas">Farsta</a>
           </nav>
          </body>
         </html>
