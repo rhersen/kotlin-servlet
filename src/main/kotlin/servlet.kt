@@ -55,9 +55,15 @@ class HomeController : HttpServlet() {
           </nav>
           <nav class="center wide">
             <li><a href="Cst">Centralen</a>
+            <li><a href="Sst">Södra</a>
+            <li><a href="Åbe">Årstaberg</a>
           </nav>
           <nav class="pull-left narrow">
+            <li><a href="Sta">Stuvsta</a>
+            <li><a href="Hu">Huddinge</a>
+            <li><a href="Flb">Flemingsberg</a>
             <li><a href="Tul">Tullinge</a>
+            <li><a href="Tu">Tumba</a>
           </nav>
           <nav class="center">
             <li><a href="Äs">Älvsjö</a>
@@ -131,7 +137,7 @@ class HomeController : HttpServlet() {
 }
 
 private fun getRealTrains(locationSignature: String): InputStream {
-    val url = URL("http://api.trafikinfo.trafikverket.se/v1/data.xml")
+    val url = URL("http://api.trafikinfo.trafikverket.se/v1.1/data.xml")
     val conn = url.openConnection() as HttpURLConnection
     conn.requestMethod = "POST"
     conn.setRequestProperty("Content-Type", "text/xml")
@@ -169,7 +175,10 @@ fun parse(inputStream: InputStream): List<Map<String?, String?>> {
 }
 
 private fun getAnnouncement(node: Node): Map<String?, String?> {
-    return childList(node).map { it.nodeName to it.textContent }.toMap()
+    return childList(node).map {
+        val locationName = childList(it).find { it.nodeName == "LocationName" }
+        it.nodeName to (locationName ?: it).textContent
+    }.toMap()
 }
 
 private fun childList(n: Node): List<Node> {
