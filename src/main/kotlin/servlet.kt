@@ -20,6 +20,7 @@ class HomeController : HttpServlet() {
 
         val servletPath = req.servletPath
         val locationSignature = servletPath.substring(servletPath.lastIndexOf('/') + 1)
+        println("""'$locationSignature'""")
 
         try {
             val departures = parse(getRealTrains(locationSignature))
