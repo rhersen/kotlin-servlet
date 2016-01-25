@@ -20,16 +20,12 @@ class HomeController : HttpServlet() {
 
         val servletPath = req.servletPath
         val locationSignature = servletPath.substring(servletPath.lastIndexOf('/') + 1)
-        println("""'$locationSignature'""")
 
         try {
-            val departures = parse(getRealTrains(locationSignature))
-
-            if (departures.isEmpty())
+            if (locationSignature.isEmpty())
                 writeIndex(writer)
             else
-                writeStation(departures, writer)
-
+                writeStation(parse(getRealTrains(locationSignature)), writer)
         } catch(e: IllegalAccessException) {
             writer.write(e.message)
             res.status = 401
@@ -143,12 +139,12 @@ private fun getRealTrains(locationSignature: String): InputStream {
     conn.requestMethod = "POST"
     conn.setRequestProperty("Content-Type", "text/xml")
     conn.doOutput = true
-    val w = OutputStreamWriter(conn.outputStream, "ISO-8859-1")
+    val w = OutputStreamWriter(conn.outputStream)
     val dateadd = "\$dateadd"
     w.write(request(
             "AdvertisedTimeAtLocation",
             """
-            <LIKE name='ProductInformation' value='Pendelt.g' />
+            <IN name='ProductInformation' value='Pendeltåg' />
             <LIKE name='AdvertisedTrainIdent' value='[0-9]$' />
             <EQ name='ActivityType' value='Avgang' />
             <EQ name='LocationSignature' value='$locationSignature' />
