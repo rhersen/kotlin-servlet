@@ -14,6 +14,20 @@ class HomeController : HttpServlet() {
     override fun doGet(req: HttpServletRequest, res: HttpServletResponse) {
         if (req.requestURI.endsWith(".ico")) return
 
+        val departuresPath = Regex(""".*departures/(.+)$""").matchEntire(req.servletPath)
+
+        if (departuresPath != null) {
+            val location = departuresPath.groups[1]
+
+            if (location != null) {
+                res.contentType = "application/json";
+                res.characterEncoding = "UTF-8";
+                writeDepartures(getRealTrains(location.value, "json"), res.writer)
+            }
+
+            return
+        }
+
         res.contentType = "text/html";
         res.characterEncoding = "UTF-8";
         val writer = res.writer
@@ -25,10 +39,20 @@ class HomeController : HttpServlet() {
             if (locationSignature.isEmpty())
                 writeIndex(writer)
             else
-                writeStation(parse(getRealTrains(locationSignature)), writer)
+                writeStation(parse(getRealTrains(locationSignature, "xml")), writer)
         } catch(e: IllegalAccessException) {
             writer.write(e.message)
             res.status = 401
+        }
+    }
+
+    private fun writeDepartures(realTrains: InputStream, writer: PrintWriter) {
+        val reader = BufferedReader(InputStreamReader(realTrains))
+
+        var readLine = reader.readLine()
+        while (readLine != null) {
+            writer.write(readLine)
+            readLine = reader.readLine()
         }
     }
 
@@ -133,8 +157,8 @@ class HomeController : HttpServlet() {
     }
 }
 
-private fun getRealTrains(locationSignature: String): InputStream {
-    val url = URL("http://api.trafikinfo.trafikverket.se/v1.1/data.xml")
+private fun getRealTrains(locationSignature: String, format: String): InputStream {
+    val url = URL("http://api.trafikinfo.trafikverket.se/v1.1/data.$format")
     val conn = url.openConnection() as HttpURLConnection
     conn.requestMethod = "POST"
     conn.setRequestProperty("Content-Type", "text/xml")
