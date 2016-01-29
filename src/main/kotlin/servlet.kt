@@ -60,37 +60,37 @@ class HomeController : HttpServlet() {
         writer.write(header("kotlin servlet"))
         writer.write("""
           <nav class="pull-left">
-            <li><a href="Spå">Spånga</a>
+            <div><a href="Spå">Spånga</a></div>
           </nav>
           <nav class="pull-right">
-            <li><a href="Udl">Ulriksdal</a>
+            <div><a href="Udl">Ulriksdal</a></div>
           </nav>
           <nav class="pull-left narrow">
-            <li><a href="Sub">Sundbyberg</a>
+            <div><a href="Sub">Sundbyberg</a></div>
           </nav>
           <nav class="center">
-            <li><a href="Ke">Karlberg</a>
+            <div><a href="Ke">Karlberg</a></div>
           </nav>
           <nav class="pull-right narrow">
-            <li><a href="Sol">Solna</a>
+            <div><a href="Sol">Solna</a></div>
           </nav>
           <nav class="center wide">
-            <li><a href="Cst">Centralen</a>
-            <li><a href="Sst">Södra</a>
-            <li><a href="Åbe">Årstaberg</a>
+            <div><a href="Cst">Centralen</a></div>
+            <div><a href="Sst">Södra</a></div>
+            <div><a href="Åbe">Årstaberg</a></div>
           </nav>
           <nav class="pull-left narrow">
-            <li><a href="Sta">Stuvsta</a>
-            <li><a href="Hu">Huddinge</a>
-            <li><a href="Flb">Flemingsberg</a>
-            <li><a href="Tul">Tullinge</a>
-            <li><a href="Tu">Tumba</a>
+            <div><a href="Sta">Stuvsta</a></div>
+            <div><a href="Hu">Huddinge</a></div>
+            <div><a href="Flb">Flemingsberg</a></div>
+            <div><a href="Tul">Tullinge</a></div>
+            <div><a href="Tu">Tumba</a></div>
           </nav>
           <nav class="center">
-            <li><a href="Äs">Älvsjö</a>
+            <div><a href="Äs">Älvsjö</a></div>
           </nav>
           <nav class="pull-right narrow">
-            <li><a href="Fas">Farsta</a>
+            <div><a href="Fas">Farsta</a></div>
           </nav>
          </body>
         </html>
@@ -141,14 +141,13 @@ class HomeController : HttpServlet() {
               table { border-collapse: collapse; }
               th { border-right: 1px solid #999; }
               td { border: 1px solid #999; }
-              li { list-style-type: none; }
               a { text-decoration: none; }
               .pull-left { float: left; width: 50%; }
               .pull-right { float: left; width: 50%; }
-              .pull-right > li { text-align: right; }
+              .pull-right > div { text-align: right; }
               .narrow { width: 35%; }
               .center { float: left; width: 30%; }
-              .center > li { text-align: center; }
+              .center > div { text-align: center; }
               .wide { width: 100%; }
               </style>
              </head>
