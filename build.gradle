@@ -2,11 +2,12 @@ group 'html5-kotlin-servlet'
 version '1.0-SNAPSHOT'
 
 buildscript {
+    ext.kotlin_version = '1.0.0-rc-1036'
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.0-beta-4584'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -26,7 +27,10 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    testCompile 'org.jetbrains.spek:spek:0.1.188'
+    testCompile 'org.jetbrains.spek:spek:0.1.194'
     compile group: 'javax', name: 'javaee-api', version: '7.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-4584"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
 }
