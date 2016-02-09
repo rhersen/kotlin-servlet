@@ -189,16 +189,35 @@ private fun getRealTrains(locationSignature: String, format: String): InputStrea
     conn.doOutput = true
     val w = OutputStreamWriter(conn.outputStream)
     val dateadd = "\$dateadd"
-    w.write(request(
-            "AdvertisedTimeAtLocation",
-            """
-            <IN name='ProductInformation' value='Pendeltåg' />
-            <LIKE name='AdvertisedTrainIdent' value='[0-9]$' />
-            <EQ name='ActivityType' value='Avgang' />
-            <EQ name='LocationSignature' value='$locationSignature' />
-            <GT name='AdvertisedTimeAtLocation' value='$dateadd(-00:10:00)' />
-            <LT name='AdvertisedTimeAtLocation' value='$dateadd(00:50:00)' />
-            """))
+    w.write("""
+    <REQUEST>
+     <LOGIN authenticationkey='${getKey()}' />
+     <QUERY objecttype='TrainAnnouncement' orderby='${"AdvertisedTimeAtLocation"}'>
+      <FILTER>
+       <AND>
+        <IN name='ProductInformation' value='Pendeltåg' />
+        <EQ name='ActivityType' value='Avgang' />
+        <EQ name='LocationSignature' value='$locationSignature' />
+        <OR>
+         <AND>
+          <GT name='AdvertisedTimeAtLocation' value='$dateadd(-00:15:00)' />
+          <LT name='AdvertisedTimeAtLocation' value='$dateadd(00:59:00)' />
+         </AND>
+         <GT name='EstimatedTimeAtLocation' value='$dateadd(-00:15:00)' />
+        </OR>
+       </AND>
+      </FILTER>
+      <INCLUDE>LocationSignature</INCLUDE>
+      <INCLUDE>AdvertisedTrainIdent</INCLUDE>
+      <INCLUDE>AdvertisedTimeAtLocation</INCLUDE>
+      <INCLUDE>EstimatedTimeAtLocation</INCLUDE>
+      <INCLUDE>TimeAtLocation</INCLUDE>
+      <INCLUDE>ProductInformation</INCLUDE>
+      <INCLUDE>ToLocation</INCLUDE>
+      <INCLUDE>ActivityType</INCLUDE>
+     </QUERY>
+    </REQUEST>"""
+    )
     w.close()
 
     if (conn.responseCode != 200)
@@ -263,24 +282,4 @@ private fun getAnnouncement(node: Node): Map<String?, String?> {
 private fun childList(n: Node): List<Node> {
     val childNodes = n.childNodes
     return (0..childNodes.length - 1).map { childNodes.item(it) }
-}
-
-fun request(orderBy: String, filters: String): String {
-    return """
-    <REQUEST>
-     <LOGIN authenticationkey='${getKey()}' />
-     <QUERY objecttype='TrainAnnouncement' orderby='$orderBy'>
-      <FILTER>
-       <AND>$filters</AND>
-      </FILTER>
-      <INCLUDE>LocationSignature</INCLUDE>
-      <INCLUDE>AdvertisedTrainIdent</INCLUDE>
-      <INCLUDE>AdvertisedTimeAtLocation</INCLUDE>
-      <INCLUDE>EstimatedTimeAtLocation</INCLUDE>
-      <INCLUDE>TimeAtLocation</INCLUDE>
-      <INCLUDE>ProductInformation</INCLUDE>
-      <INCLUDE>ToLocation</INCLUDE>
-      <INCLUDE>ActivityType</INCLUDE>
-     </QUERY>
-    </REQUEST>"""
 }
