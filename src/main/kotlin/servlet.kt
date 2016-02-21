@@ -53,6 +53,16 @@ class HomeController : HttpServlet() {
             return
         }
 
+        val currentPath = Regex(""".*api/current.*""").matchEntire(req.servletPath)
+        if (currentPath != null) {
+            res.contentType = "application/json";
+            res.characterEncoding = "UTF-8";
+
+            writeDepartures(getCurrentTrains(), res.writer)
+
+            return
+        }
+
         res.contentType = "text/html";
         res.characterEncoding = "UTF-8";
         val writer = res.writer
@@ -205,6 +215,45 @@ private fun getRealTrains(locationSignature: String, format: String): InputStrea
          </AND>
          <GT name='EstimatedTimeAtLocation' value='$dateadd(-00:15:00)' />
         </OR>
+       </AND>
+      </FILTER>
+      <INCLUDE>LocationSignature</INCLUDE>
+      <INCLUDE>AdvertisedTrainIdent</INCLUDE>
+      <INCLUDE>AdvertisedTimeAtLocation</INCLUDE>
+      <INCLUDE>EstimatedTimeAtLocation</INCLUDE>
+      <INCLUDE>TimeAtLocation</INCLUDE>
+      <INCLUDE>ProductInformation</INCLUDE>
+      <INCLUDE>ToLocation</INCLUDE>
+      <INCLUDE>ActivityType</INCLUDE>
+     </QUERY>
+    </REQUEST>"""
+    )
+    w.close()
+
+    if (conn.responseCode != 200)
+        throw RuntimeException(
+                "Failed: HTTP error code: ${conn.responseCode}")
+
+    return conn.inputStream
+}
+
+private fun getCurrentTrains(): InputStream {
+    val url = URL("http://api.trafikinfo.trafikverket.se/v1.1/data.json")
+    val conn = url.openConnection() as HttpURLConnection
+    conn.requestMethod = "POST"
+    conn.setRequestProperty("Content-Type", "text/xml")
+    conn.doOutput = true
+    val w = OutputStreamWriter(conn.outputStream)
+    val dateadd = "\$dateadd"
+    w.write("""
+    <REQUEST>
+     <LOGIN authenticationkey='${getKey()}' />
+     <QUERY objecttype='TrainAnnouncement' orderby='${"AdvertisedTrainIdent"}'>
+      <FILTER>
+       <AND>
+        <IN name='ProductInformation' value='Pendeltåg' />
+        <GT name='TimeAtLocation' value='$dateadd(-00:04:00)' />
+        <LT name='TimeAtLocation' value='$dateadd(00:04:00)' />
        </AND>
       </FILTER>
       <INCLUDE>LocationSignature</INCLUDE>
