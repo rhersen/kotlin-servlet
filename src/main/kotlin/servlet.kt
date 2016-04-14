@@ -206,6 +206,7 @@ private fun getRealTrains(locationSignature: String, format: String): InputStrea
       <FILTER>
        <AND>
         <IN name='ProductInformation' value='Pendeltåg' />
+        <NE name='Canceled' value='true' />
         <EQ name='ActivityType' value='Avgang' />
         <EQ name='LocationSignature' value='$locationSignature' />
         <OR>
@@ -252,8 +253,8 @@ private fun getCurrentTrains(): InputStream {
       <FILTER>
        <AND>
         <IN name='ProductInformation' value='Pendeltåg' />
-        <GT name='TimeAtLocation' value='$dateadd(-00:04:00)' />
-        <LT name='TimeAtLocation' value='$dateadd(00:04:00)' />
+        <GT name='TimeAtLocation' value='$dateadd(-00:06:00)' />
+        <LT name='TimeAtLocation' value='$dateadd(00:06:00)' />
        </AND>
       </FILTER>
       <INCLUDE>LocationSignature</INCLUDE>
