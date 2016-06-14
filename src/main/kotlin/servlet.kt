@@ -63,6 +63,16 @@ class HomeController : HttpServlet() {
             return
         }
 
+        val activitesPath = Regex(""".*api/activities.*""").matchEntire(req.servletPath)
+        if (activitesPath != null) {
+            res.contentType = "application/json";
+            res.characterEncoding = "UTF-8";
+
+            writeDepartures(getActivities(), res.writer)
+
+            return
+        }
+
         res.contentType = "text/html";
         res.characterEncoding = "UTF-8";
         val writer = res.writer
@@ -78,6 +88,9 @@ class HomeController : HttpServlet() {
         } catch(e: IllegalAccessException) {
             writer.write(e.message)
             res.status = 401
+        } catch(e: NoSuchElementException) {
+            writer.write("""$locationSignature not found""")
+            res.status = 404
         }
     }
 
@@ -133,6 +146,8 @@ class HomeController : HttpServlet() {
     }
 
     private fun writeStation(data: List<Map<String?, String?>>, writer: PrintWriter) {
+        if (data.isEmpty()) throw NoSuchElementException()
+
         val locationSignature = data.first()["LocationSignature"]
         writer.write(header(locationSignature.orEmpty()))
         writer.write("""
@@ -223,7 +238,6 @@ private fun getRealTrains(locationSignature: String, format: String): InputStrea
       <INCLUDE>AdvertisedTimeAtLocation</INCLUDE>
       <INCLUDE>EstimatedTimeAtLocation</INCLUDE>
       <INCLUDE>TimeAtLocation</INCLUDE>
-      <INCLUDE>ProductInformation</INCLUDE>
       <INCLUDE>ToLocation</INCLUDE>
       <INCLUDE>ActivityType</INCLUDE>
      </QUERY>
@@ -246,6 +260,7 @@ private fun getCurrentTrains(): InputStream {
     conn.doOutput = true
     val w = OutputStreamWriter(conn.outputStream)
     val dateadd = "\$dateadd"
+
     w.write("""
     <REQUEST>
      <LOGIN authenticationkey='${getKey()}' />
@@ -262,7 +277,57 @@ private fun getCurrentTrains(): InputStream {
       <INCLUDE>AdvertisedTimeAtLocation</INCLUDE>
       <INCLUDE>EstimatedTimeAtLocation</INCLUDE>
       <INCLUDE>TimeAtLocation</INCLUDE>
-      <INCLUDE>ProductInformation</INCLUDE>
+      <INCLUDE>ToLocation</INCLUDE>
+      <INCLUDE>ActivityType</INCLUDE>
+     </QUERY>
+    </REQUEST>"""
+    )
+    w.close()
+
+    if (conn.responseCode != 200)
+        throw RuntimeException(
+                "Failed: HTTP error code: ${conn.responseCode}")
+
+    return conn.inputStream
+}
+
+private fun getActivities(): InputStream {
+    val url = URL("http://api.trafikinfo.trafikverket.se/v1.1/data.json")
+    val conn = url.openConnection() as HttpURLConnection
+    conn.requestMethod = "POST"
+    conn.setRequestProperty("Content-Type", "text/xml")
+    conn.doOutput = true
+    val w = OutputStreamWriter(conn.outputStream)
+    val dateadd = "\$dateadd"
+
+    w.write("""
+    <REQUEST>
+     <LOGIN authenticationkey='${getKey()}' />
+     <QUERY objecttype='TrainAnnouncement' orderby='${"AdvertisedTrainIdent"}'>
+      <FILTER>
+       <AND>
+        <IN name='ProductInformation' value='Pendeltåg' />
+        <LIKE name='AdvertisedTrainIdent' value='/[02468]$/' />
+        <OR>
+          <AND>
+            <GT name='AdvertisedTimeAtLocation' value='$dateadd(-01:00:00)' />
+            <LT name='AdvertisedTimeAtLocation' value='$dateadd(01:00:00)' />
+          </AND>
+          <AND>
+            <GT name='TimeAtLocation' value='$dateadd(-01:00:00)' />
+            <LT name='TimeAtLocation' value='$dateadd(01:00:00)' />
+          </AND>
+        </OR>
+        <OR>
+          <EQ name='LocationSignature' value='Tul' />
+        </OR>
+       </AND>
+      </FILTER>
+      <INCLUDE>LocationSignature</INCLUDE>
+      <INCLUDE>AdvertisedTrainIdent</INCLUDE>
+      <INCLUDE>AdvertisedTimeAtLocation</INCLUDE>
+      <INCLUDE>EstimatedTimeAtLocation</INCLUDE>
+      <INCLUDE>TimeAtLocation</INCLUDE>
       <INCLUDE>ToLocation</INCLUDE>
       <INCLUDE>ActivityType</INCLUDE>
      </QUERY>
